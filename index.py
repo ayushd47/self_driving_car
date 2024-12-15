@@ -2,8 +2,11 @@ import RPi.GPIO as GPIO
 import time
 import cv2
 import numpy as np
-from firebase import firebase  # Firebase library for cloud integration
+import cloud_integration
+import distance_measurement
+print(distance_measurement.measure_distance())
 
+# from cloud_integration 
 # GPIO Pins
 TRIG = 23
 ECHO = 24
@@ -11,9 +14,7 @@ LEFT_SIGNAL = 27
 RIGHT_SIGNAL = 22
 MOTOR_PIN = 17
 
-# Firebase Setup
-FIREBASE_URL = "https://autonomous-vehicle-b897a-default-rtdb.firebaseio.com/"
-db = firebase.FirebaseApplication(FIREBASE_URL, None)
+measure_distance()
 
 # Initialize GPIO
 GPIO.setmode(GPIO.BCM)
@@ -23,20 +24,9 @@ GPIO.setup(LEFT_SIGNAL, GPIO.OUT)
 GPIO.setup(RIGHT_SIGNAL, GPIO.OUT)
 GPIO.setup(MOTOR_PIN, GPIO.OUT)
 
-# Function to measure distance
-def measure_distance():
-    GPIO.output(TRIG, True)
-    time.sleep(0.00001)
-    GPIO.output(TRIG, False)
-
-    while GPIO.input(ECHO) == 0:
-        pulse_start = time.time()
-    while GPIO.input(ECHO) == 1:
-        pulse_end = time.time()
-
-    pulse_duration = pulse_end - pulse_start
-    distance = pulse_duration * 17150  # Convert to cm
-    return round(distance, 2)
+# Firebase Setup
+FIREBASE_URL = "https://autonomous-vehicle-b897a-default-rtdb.firebaseio.com/"
+db = firebase.FirebaseApplication(FIREBASE_URL, None)
 
 # Lane Detection Function
 def detect_lane(frame):
